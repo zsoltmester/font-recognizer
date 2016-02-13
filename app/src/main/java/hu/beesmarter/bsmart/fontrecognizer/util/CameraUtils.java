@@ -1,4 +1,4 @@
-package hu.beesmarter.bsmart.fontrecognizer;
+package hu.beesmarter.bsmart.fontrecognizer.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -82,7 +82,7 @@ public class CameraUtils {
 				bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, m, false);
 			}
 
-			return bitmap.copy(Bitmap.Config.ARGB_8888, true);
+			return bitmap.copy(Bitmap.Config.ARGB_8888, true); // TODO esetleg más config javíthatna
 		} catch (IOException e) {
 			Log.e(TAG, "Unable to change the orientation.");
 			return bitmap;

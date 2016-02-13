@@ -67,5 +67,7 @@ public class TessUtils {
 
 		tess = new TessBaseAPI();
 		tess.init(TessUtils.TESSDATA_PARENT, TessUtils.TESSDATA_LANGUAGE);
+		// TODO meg kéne találni a nekünk megfelelő seg mode-ot.
+		//tess.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_BLOCK_VERT_TEXT);
 	}
 }

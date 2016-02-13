@@ -17,12 +17,12 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import hu.beesmarter.bsmart.fontrecognizer.CameraUtils;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
+import hu.beesmarter.bsmart.fontrecognizer.util.CameraUtils;
 
 public class MainActivity extends AppCompatActivity {
 
