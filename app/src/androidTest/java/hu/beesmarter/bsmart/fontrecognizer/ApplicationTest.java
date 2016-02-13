@@ -1,4 +1,4 @@
-package hu.beesmarter.bsmart.fontrecognizer.fontrecognizer;
+package hu.beesmarter.bsmart.fontrecognizer;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
