@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
+import hu.beesmarter.bsmart.fontrecognizer.util.AndroidUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 		realStartCameraButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startCamera();
+				AndroidUtils.startCamera(MainActivity.this, REQUEST_CAMERA_RESULT_CODE);
 			}
 		});
 
@@ -93,11 +94,6 @@ public class MainActivity extends AppCompatActivity {
 		} else {
 			realMode();
 		}
-	}
-
-	private void startCamera() {
-		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-		startActivityForResult(cameraIntent, REQUEST_CAMERA_RESULT_CODE);
 	}
 
 	@Override
