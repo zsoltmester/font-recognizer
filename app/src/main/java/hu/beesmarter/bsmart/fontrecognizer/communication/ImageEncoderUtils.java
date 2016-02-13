@@ -2,6 +2,10 @@ package hu.beesmarter.bsmart.fontrecognizer.communication;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Util class for image encoding.
@@ -53,7 +57,25 @@ public class ImageEncoderUtils {
 		return result.toString();
 	}
 
-	public static Bitmap convertToBitmap(byte[] bitmapBytes) {
+	/**
+	 * Convert byte array to bitmap.
+	 *
+	 * @param bitmapBytes the byte array.
+	 * @return the bitmap.
+	 */
+	public static @Nullable Bitmap convertToBitmap(@NonNull byte[] bitmapBytes) {
 		return BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+	}
+
+	/**
+	 * Converts bitmap to byte array.
+	 *
+	 * @param bitmap the bitmap.
+	 * @return the byte array.
+	 */
+	public static @Nullable byte[] convertToByteArray(@NonNull Bitmap bitmap) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		return stream.toByteArray();
 	}
 }

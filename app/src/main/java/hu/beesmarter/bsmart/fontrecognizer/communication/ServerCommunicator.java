@@ -1,7 +1,8 @@
 package hu.beesmarter.bsmart.fontrecognizer.communication;
 
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
@@ -31,12 +32,28 @@ public class ServerCommunicator {
 	private String address;
 	private boolean socketEnabled;
 
-	public ServerCommunicator(final String address, final int port) throws IOException, ExecutionException, InterruptedException {
+	/**
+	 * Constructor of the class.
+	 *
+	 * @param address the ip address.
+	 * @param port    the port number.
+	 * @throws IOException          please handle.
+	 * @throws ExecutionException   please handle.
+	 * @throws InterruptedException please handle.
+	 */
+	public ServerCommunicator(@NonNull final String address, final int port) throws IOException, ExecutionException, InterruptedException {
 		this.address = address;
 		this.port = port;
 	}
 
-	public Boolean startCommunication() throws ExecutionException, InterruptedException {
+	/**
+	 * Starts the communication (enable socket).
+	 *
+	 * @return {@code true} if success, {@code false} otherwise.
+	 * @throws ExecutionException   please handle.
+	 * @throws InterruptedException please handle.
+	 */
+	public boolean startCommunication() throws ExecutionException, InterruptedException {
 		boolean result = new AsyncTask<Void, Void, Boolean>() {
 			@Override
 			protected Boolean doInBackground(Void... params) {
@@ -59,7 +76,15 @@ public class ServerCommunicator {
 		return result;
 	}
 
-	public Boolean endCommuncation() throws IOException, ExecutionException, InterruptedException {
+	/**
+	 * Ends the communication (close the socket).
+	 *
+	 * @return {@code true} if success, {@code false} otherwise.
+	 * @throws IOException          please handle.
+	 * @throws ExecutionException   please handle.
+	 * @throws InterruptedException please handle.
+	 */
+	public boolean endCommuncation() throws IOException, ExecutionException, InterruptedException {
 		return new AsyncTask<Void, Void, Boolean>() {
 			@Override
 			protected Boolean doInBackground(Void... params) {
@@ -101,14 +126,20 @@ public class ServerCommunicator {
 
 	}
 
-	public Bitmap getNextPicture() throws ExecutionException, InterruptedException {
-		return new AsyncTask<Void, Void, Bitmap>() {
+	/**
+	 * Gets the next picture.
+	 *
+	 * @return the picutre in byte array.
+	 * @throws ExecutionException   please handle.
+	 * @throws InterruptedException please handle.
+	 */
+	public @NonNull byte[] getNextPicture() throws ExecutionException, InterruptedException {
+		return new AsyncTask<Void, Void, byte[]>() {
 			@Override
-			protected Bitmap doInBackground(Void... params) {
+			protected byte[] doInBackground(Void... params) {
 				sendMessage(CommunicationConfig.COMM_MSG_CLIENT_REQUEST_NEXT_PICTURE);
 				String response = getMessage();
-				byte[] imageInBytes = ImageEncoderUtils.convertToHex(formatResponseToPictureBytes(response));
-				return ImageEncoderUtils.convertToBitmap(imageInBytes);
+				return ImageEncoderUtils.convertToHex(formatResponseToPictureBytes(response));
 			}
 		}.execute().get();
 	}
@@ -118,13 +149,11 @@ public class ServerCommunicator {
 	 *
 	 * @param fontObject the fontObject
 	 * @return gets back the remaining pictures, or 0 if there is no more.
-	 * @throws ExecutionException
-	 * @throws InterruptedException
+	 * @throws ExecutionException   please handle.
+	 * @throws InterruptedException please handle.
 	 */
-	public int sendThoughtFont(final Font fontObject) throws ExecutionException, InterruptedException {
-		;
+	public int sendThoughtFont(@NonNull final Font fontObject) throws ExecutionException, InterruptedException {
 		return new AsyncTask<String, Void, Integer>() {
-
 			@Override
 			protected Integer doInBackground(String... params) {
 				sendMessage(fontObject.getFontName());
@@ -134,12 +163,22 @@ public class ServerCommunicator {
 		}.execute().get();
 	}
 
-	private void sendMessage(String message) {
+	/**
+	 * Check the server message that it is the last.
+	 *
+	 * @param message the server message.
+	 * @return {@code true} if it is the last message.
+	 */
+	public boolean checkEndMessage(@NonNull String message) {
+		return message.startsWith(CommunicationConfig.COMM_MSG_SERVER_FONT_ACK_END);
+	}
+
+	private void sendMessage(@NonNull String message) {
 		pw.println(message);
 		pw.flush();
 	}
 
-	private String getMessage() {
+	private @Nullable String getMessage() {
 		String message = null;
 		try {
 			message = br.readLine();
@@ -151,11 +190,13 @@ public class ServerCommunicator {
 		return message;
 	}
 
-	public boolean checkEndMessage(String message) {
-		return message.startsWith(CommunicationConfig.COMM_MSG_SERVER_FONT_ACK_END);
-	}
-
-	private int getRemainingPictures(String communicationMessage) {
+	/**
+	 * Gets the number of the remaining pictures.
+	 *
+	 * @param communicationMessage the server message.
+	 * @return the number of the remaining message, or 0 if there is no more.
+	 */
+	private int getRemainingPictures(@NonNull String communicationMessage) {
 		int indexBeforeNumber = communicationMessage.lastIndexOf(": ");
 		if (indexBeforeNumber == -1) {
 			return 0;
@@ -171,7 +212,7 @@ public class ServerCommunicator {
 	 * @param imageResponse the server response containing the image.
 	 * @return the formatted string.
 	 */
-	private String formatResponseToPictureBytes(String imageResponse) {
+	private @NonNull String formatResponseToPictureBytes(@NonNull String imageResponse) {
 		String formattedString = imageResponse.substring(2, imageResponse.length() - 1 - 2);
 		Log.d(AppConfig.LOG, formattedString);
 		return formattedString;

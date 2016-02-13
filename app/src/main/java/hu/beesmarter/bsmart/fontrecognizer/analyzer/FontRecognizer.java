@@ -1,5 +1,6 @@
 package hu.beesmarter.bsmart.fontrecognizer.analyzer;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 /**
@@ -14,4 +15,12 @@ public interface FontRecognizer {
 	 * @return The recognised font.
 	 */
 	@NonNull Font recognizeFontFromImage(@NonNull byte[] image);
+
+	/**
+	 * It process the image and recognise the font.
+	 *
+	 * @param image The image.
+	 * @return The recognised font.
+	 */
+	@NonNull Font recognizeFontFromImage(@NonNull Bitmap image);
 }

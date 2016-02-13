@@ -3,9 +3,11 @@ package hu.beesmarter.bsmart.fontrecognizer.ui;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -16,6 +18,9 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import hu.beesmarter.bsmart.fontrecognizer.CameraUtils;
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
@@ -44,11 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
 	private TextView realResultText;
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		TessUtils.initTessdata(this);
 
 		coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 		modeSwitch = (Switch) findViewById(R.id.mode_switch);
@@ -81,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 		realStartCameraButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				AndroidUtils.startCamera(MainActivity.this, REQUEST_CAMERA_RESULT_CODE);
+				startCamera();
 			}
 		});
 
@@ -96,19 +102,25 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	private void startCamera() {
+		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, CameraUtils.getTakenImageUri());
+		startActivityForResult(cameraIntent, REQUEST_CAMERA_RESULT_CODE);
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
-			Bitmap capturedImage = (Bitmap) data.getExtras().get("data");
+			Bitmap capturedImage = CameraUtils.getSavedBitmapNormalized();
 			processCapturedImage(capturedImage);
 		}
 	}
 
 	private void processCapturedImage(Bitmap capturedImage) {
-
-		String fontName = "XYZ";
+		String fontName = new BasePointFontRecognizer()
+				.recognizeFontFromImage(capturedImage).getFontName();
 		realStatusMessage.setVisibility(View.VISIBLE);
 		realResultText.setText(fontName);
 
