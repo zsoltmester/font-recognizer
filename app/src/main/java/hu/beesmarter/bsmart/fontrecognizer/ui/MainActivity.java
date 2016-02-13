@@ -2,13 +2,12 @@ package hu.beesmarter.bsmart.fontrecognizer.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -16,11 +15,10 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import hu.beesmarter.bsmart.fontrecognizer.CameraUtils;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
@@ -49,9 +47,6 @@ public class MainActivity extends AppCompatActivity {
 	private TextView realStatusMessage;
 
 	private TextView realResultText;
-
-	private static final String TAKEN_IMAGE_PATH = TessUtils.TESSDATA_PARENT + "raw.jpeg";
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private void startCamera() {
 		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(TAKEN_IMAGE_PATH)));
+		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, CameraUtils.getTakenImageUri());
 		startActivityForResult(cameraIntent, REQUEST_CAMERA_RESULT_CODE);
 	}
 
@@ -117,16 +112,14 @@ public class MainActivity extends AppCompatActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
-			Bitmap capturedImage = BitmapFactory.decodeFile(TAKEN_IMAGE_PATH);
+			Bitmap capturedImage = CameraUtils.getSavedBitmapNormalized();
 			processCapturedImage(capturedImage);
 		}
 	}
 
 	private void processCapturedImage(Bitmap capturedImage) {
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		capturedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 		String fontName = new BasePointFontRecognizer()
-				.recognizeFontFromImage(stream.toByteArray()).getFontName();
+				.recognizeFontFromImage(capturedImage).getFontName();
 		realStatusMessage.setVisibility(View.VISIBLE);
 		realResultText.setText(fontName);
 

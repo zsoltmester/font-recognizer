@@ -1,9 +1,7 @@
 package hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
@@ -20,12 +18,14 @@ public class BasePointFontRecognizer implements FontRecognizer {
 
 	@Override
 	public @NonNull Font recognizeFontFromImage(@NonNull byte[] rawImage) {
+		throw new UnsupportedOperationException("Please use the bitmap version of this method.");
+	}
+
+	@Override
+	public @NonNull Font recognizeFontFromImage(@NonNull Bitmap image) {
 		TessBaseAPI tess = TessUtils.tess;
-
-		Bitmap img = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length);
-		tess.setImage(img);
+		tess.setImage(image);
 		String text = tess.getUTF8Text();
-
 		tess.clear();
 		return new Font(text);
 	}
