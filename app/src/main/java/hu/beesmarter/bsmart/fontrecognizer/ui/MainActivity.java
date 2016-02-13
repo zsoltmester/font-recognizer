@@ -3,9 +3,11 @@ package hu.beesmarter.bsmart.fontrecognizer.ui;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -13,9 +15,13 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
@@ -48,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		TessUtils.initTessdata(this);
 
 		coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 		modeSwitch = (Switch) findViewById(R.id.mode_switch);
@@ -111,8 +119,10 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void processCapturedImage(Bitmap capturedImage) {
-
-		String fontName = "XYZ";
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		capturedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		String fontName = new BasePointFontRecognizer()
+				.recognizeFontFromImage(stream.toByteArray()).getFontName();
 		realStatusMessage.setVisibility(View.VISIBLE);
 		realResultText.setText(fontName);
 
