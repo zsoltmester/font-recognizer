@@ -2,12 +2,13 @@ package hu.beesmarter.bsmart.fontrecognizer.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 	private TextView realStatusMessage;
 
 	private TextView realResultText;
+
+	private static final String TAKEN_IMAGE_PATH = TessUtils.TESSDATA_PARENT + "raw.jpeg";
 
 
 	@Override
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private void startCamera() {
 		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(TAKEN_IMAGE_PATH)));
 		startActivityForResult(cameraIntent, REQUEST_CAMERA_RESULT_CODE);
 	}
 
@@ -113,14 +117,14 @@ public class MainActivity extends AppCompatActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
-			Bitmap capturedImage = (Bitmap) data.getExtras().get("data");
+			Bitmap capturedImage = BitmapFactory.decodeFile(TAKEN_IMAGE_PATH);
 			processCapturedImage(capturedImage);
 		}
 	}
 
 	private void processCapturedImage(Bitmap capturedImage) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		capturedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		capturedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 		String fontName = new BasePointFontRecognizer()
 				.recognizeFontFromImage(stream.toByteArray()).getFontName();
 		realStatusMessage.setVisibility(View.VISIBLE);
