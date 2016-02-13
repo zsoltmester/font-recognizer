@@ -10,14 +10,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.text.DateFormat;
-import java.util.Date;
 
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
 
@@ -30,7 +25,7 @@ public class CameraUtils {
 
 	private static final String TAKEN_IMAGE_PATH = TessUtils.TESSDATA_PARENT + "raw.jpeg";
 
-	private static final String STORED_IMAGE_PATH = TessUtils.TESSDATA_PARENT + "picture";
+	private static final int THRESHOLD = 90;
 
 	/**
 	 * @return The path for the taken image.
@@ -45,7 +40,9 @@ public class CameraUtils {
 	public static @Nullable Bitmap getSavedBitmapNormalized() {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = 8; // TODO ezt egy jó értékre állítani felbontástól függően
-		return normalizeBitmapOrientation(BitmapFactory.decodeFile(TAKEN_IMAGE_PATH, options));
+		Bitmap image =
+				normalizeBitmapOrientation(BitmapFactory.decodeFile(TAKEN_IMAGE_PATH, options));
+		return ImageUtils.cleanImage(image, THRESHOLD);
 	}
 
 	/**
@@ -92,23 +89,7 @@ public class CameraUtils {
 	/**
 	 * Saves the camera picture to memory.
 	 */
-	public static void saveCameraPicture(Context context, Bitmap bitmap) {
-		String imagePostfix = DateFormat.getDateTimeInstance().format(new Date());
-
-		File file = new File(STORED_IMAGE_PATH + imagePostfix + ".jpg");
-		if (!file.exists()) {
-			file.mkdirs();
-		}
-
-		try {
-			OutputStream outputStream = new FileOutputStream(file);
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-			outputStream.flush();
-			outputStream.close();
-
-			MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
-		} catch (IOException e) {
-			Toast.makeText(context, "Save Failed", Toast.LENGTH_SHORT).show();
-		}
+	public static void saveCameraPicture(Context context, Bitmap bitmap, String name) {
+		MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, name + ".jpg", "");
 	}
 }

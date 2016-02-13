@@ -30,7 +30,8 @@
 		</activity>
 		<activity
 			android:name="hu.beesmarter.bsmart.fontrecognizer.ui.test.ImageCleaningTestActivity"
-			android:label="ImageCleaning">
+			android:label="ImageCleaning"
+			android:screenOrientation="portrait">
 		</activity>
 	</application>
 

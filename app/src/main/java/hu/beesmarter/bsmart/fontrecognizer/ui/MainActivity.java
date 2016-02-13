@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
 			Bitmap capturedImage = CameraUtils.getSavedBitmapNormalized();
-			CameraUtils.saveCameraPicture(this, capturedImage);
+			CameraUtils.saveCameraPicture(this, capturedImage, "captured_image");
 			processCapturedImage(capturedImage);
 		}
 	}
