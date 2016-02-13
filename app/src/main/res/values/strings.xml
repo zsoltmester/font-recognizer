@@ -1,3 +1,8 @@
 <resources>
 	<string name="app_name">FontRecognizer</string>
+	<string name="start_test_button">Start test</string>
+	<string name="add_ip">Used ip</string>
+	<string name="start_camera">Start camera</string>
+	<string name="font_result_label">The font of the text:</string>
+	<string name="switch_label">Test mode</string>
 </resources>

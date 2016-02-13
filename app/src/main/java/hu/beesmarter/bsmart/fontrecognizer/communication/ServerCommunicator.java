@@ -27,13 +27,11 @@ public class ServerCommunicator {
 	private Socket socket;
 	private PrintWriter pw;
 	private BufferedReader br;
-	private String dataId;
 	private int port;
 	private String address;
 	private boolean socketEnabled;
 
-	public ServerCommunicator(final String address, final int port, final String dataId) throws IOException, ExecutionException, InterruptedException {
-		this.dataId = dataId;
+	public ServerCommunicator(final String address, final int port) throws IOException, ExecutionException, InterruptedException {
 		this.address = address;
 		this.port = port;
 	}
@@ -119,7 +117,7 @@ public class ServerCommunicator {
 	 * Sends the thought font to the server and gets back how money pictures remained.
 	 *
 	 * @param fontObject the fontObject
-	 * @return gets back the reamining pictures, or 0 if there is no more.
+	 * @return gets back the remaining pictures, or 0 if there is no more.
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
@@ -157,7 +155,7 @@ public class ServerCommunicator {
 		return message.startsWith(CommunicationConfig.COMM_MSG_SERVER_FONT_ACK_END);
 	}
 
-	public int getRemainingPictures(String communicationMessage) {
+	private int getRemainingPictures(String communicationMessage) {
 		int indexBeforeNumber = communicationMessage.lastIndexOf(": ");
 		if (indexBeforeNumber == -1) {
 			return 0;

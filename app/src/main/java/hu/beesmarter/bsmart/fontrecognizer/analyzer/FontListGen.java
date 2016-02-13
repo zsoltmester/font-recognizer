@@ -1,5 +1,7 @@
 package hu.beesmarter.bsmart.fontrecognizer.analyzer;
 
+import android.graphics.Typeface;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +10,14 @@ import java.util.List;
  */
 public class FontListGen {
 
-	public List<FontObject> getFontList() {
+	public List<FontObject> getFontList(List<Typeface> typefaces) {
 		ArrayList<FontObject> fontObjects = new ArrayList<>();
-		fontObjects.add(new FontObject("Akiza Sans", "AkizaSans"));
-		fontObjects.add(new FontObject("Anonymus Pro", "AnonymusPro"));
+		fontObjects.add(new FontObject("Akiza Sans", "AkizaSans-Bold.ttf"));
+		fontObjects.add(new FontObject("Akiza Sans", "AkizaSans-Italic.ttf"));
+		fontObjects.add(new FontObject("Akiza Sans", "AkizaSans-Regular.ttf"));
+		fontObjects.add(new FontObject("Anonymus Pro", "Anonymous Pro.ttf"));
+		fontObjects.add(new FontObject("Anonymus Pro", "Anonymous Pro I.ttf"));
+		fontObjects.add(new FontObject("Anonymus Pro", "Anonymous Pro B.ttf"));
 		fontObjects.add(new FontObject("Autonym", "Automnym"));
 		fontObjects.add(new FontObject("Averia Sans", "AveriaSans"));
 
