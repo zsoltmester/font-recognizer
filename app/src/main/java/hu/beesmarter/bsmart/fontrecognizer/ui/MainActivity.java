@@ -7,7 +7,6 @@ import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -24,7 +23,6 @@ import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecog
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
-import hu.beesmarter.bsmart.fontrecognizer.util.AndroidUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -114,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
 			Bitmap capturedImage = CameraUtils.getSavedBitmapNormalized();
+			CameraUtils.saveCameraPicture(this, capturedImage);
 			processCapturedImage(capturedImage);
 		}
 	}

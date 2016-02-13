@@ -65,7 +65,7 @@ public class ServerCommunicator {
 					outputStream = new BufferedOutputStream(outputStream);
 					pw = new PrintWriter(new OutputStreamWriter(outputStream, ENCODING));
 					socketEnabled = true;
-					return socketEnabled;
+					return true;
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
