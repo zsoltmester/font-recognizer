@@ -51,7 +51,8 @@
                     android:id="@+id/input_value_ip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/add_ip"/>
+                    android:hint="@string/add_ip"
+                    android:text="zsmester.ddns.net"/>
             </android.support.design.widget.TextInputLayout>
 
             <Button

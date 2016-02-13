@@ -25,7 +25,7 @@ public class BasePointFontRecognizer implements FontRecognizer {
 	@Override
 	public @NonNull Font recognizeFontFromImage(@NonNull Bitmap image) {
 		TessBaseAPI tess = TessUtils.tess;
-		tess.setImage(image); // TODO ide be kéne lőni a thresholdot: ImageUtils.cleanImage()
+		tess.setImage(image);
 		String text = tess.getUTF8Text();
 		tess.clear();
 		return new Font(text);
