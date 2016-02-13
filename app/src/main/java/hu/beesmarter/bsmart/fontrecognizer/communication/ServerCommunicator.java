@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 
-import hu.beesmarter.bsmart.fontrecognizer.analyzer.FontObject;
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.Font;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.config.CommunicationConfig;
 
@@ -123,7 +123,7 @@ public class ServerCommunicator {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	public int sendThoughtFont(final FontObject fontObject) throws ExecutionException, InterruptedException {
+	public int sendThoughtFont(final Font fontObject) throws ExecutionException, InterruptedException {
 		;
 		return new AsyncTask<String, Void, Integer>() {
 
