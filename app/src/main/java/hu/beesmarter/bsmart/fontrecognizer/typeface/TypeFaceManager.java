@@ -1,4 +1,4 @@
-package hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.typeface;
+package hu.beesmarter.bsmart.fontrecognizer.typeface;
 
 import android.content.Context;
 import android.content.res.AssetManager;
