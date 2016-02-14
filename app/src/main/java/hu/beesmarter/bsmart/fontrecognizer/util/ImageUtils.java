@@ -192,7 +192,21 @@ public class ImageUtils {
         textPaint.setTextSize(textSize);
         textPaint.getTextBounds(text, 0, text.length(), textBounds);
 
-        Bitmap textImage = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
+        Bitmap textImage = null;
+        try {
+            textImage = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
+        } catch (Exception|OutOfMemoryError e) {
+            e.printStackTrace();
+            if (textImage != null) {
+                textImage.recycle();
+                textImage = null;
+            }
+        }
+
+        if (textImage == null) {
+            return createBitmapForText(typeface, text, textSize / 2);
+        }
+
         Canvas canvas = new Canvas(textImage);
         canvas.drawARGB(255, 255, 255, 255);
         canvas.drawText(text, -textBounds.left, -textBounds.top, textPaint);
