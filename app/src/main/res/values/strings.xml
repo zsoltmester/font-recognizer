@@ -16,4 +16,7 @@
         mindent a beállításokban!
     </string>
 
+	<string name="typeface_loading_dialog">Loading typefaces...</string>
+
+
 </resources>

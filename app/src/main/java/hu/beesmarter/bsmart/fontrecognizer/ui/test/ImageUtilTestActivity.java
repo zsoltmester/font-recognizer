@@ -26,5 +26,12 @@ public class ImageUtilTestActivity extends BaseActivity {
                 AndroidUtils.navigateToActivity(ImageUtilTestActivity.this, ImageCleaningTestActivity.class);
             }
         });
+
+        findViewById(R.id.btn_text_from_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidUtils.navigateToActivity(ImageUtilTestActivity.this, FontImageTestActivity.class);
+            }
+        });
     }
 }

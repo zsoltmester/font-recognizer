@@ -2,11 +2,16 @@ package hu.beesmarter.bsmart.fontrecognizer.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.media.ExifInterface;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.text.TextPaint;
 import android.util.Log;
 
 import java.io.IOException;
@@ -50,7 +55,7 @@ public class ImageUtils {
     /**
      * Cleans the image.
      *
-     * @param bitmap bitmap to clean.
+     * @param bitmap    bitmap to clean.
      * @param threshold threshold for choosing final color of pixel, should be between 0-255
      * @return the cleaned image.
      */
@@ -61,7 +66,7 @@ public class ImageUtils {
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
         int pixel;
         int finalColor;
-        for(int i = 0; i < pixels.length; i++) {
+        for (int i = 0; i < pixels.length; i++) {
             pixel = pixels[i];
             finalColor = colorDecider.isDark(pixel, threshold) ? MIN_RGB : MAX_RGB;
             pixels[i] = Color.argb(255, finalColor, finalColor, finalColor);
@@ -69,8 +74,8 @@ public class ImageUtils {
         return Bitmap.createBitmap(pixels, width, height, bitmap.getConfig());
     }
 
-	/**
-	 * Process the image.
+    /**
+     * Process the image.
      */
     public static Bitmap processImage(byte[] rawImage) {
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -86,7 +91,9 @@ public class ImageUtils {
      * @param bitmap The bitmap to normalize the orientation.
      * @return The normalized bitmap.
      */
-    public static @NonNull Bitmap normalizeBitmapOrientation(@NonNull Bitmap bitmap) {
+    public static
+    @NonNull
+    Bitmap normalizeBitmapOrientation(@NonNull Bitmap bitmap) {
         try {
             ExifInterface exif = new ExifInterface(CameraUtils.TAKEN_IMAGE_PATH);
             int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
@@ -128,7 +135,7 @@ public class ImageUtils {
      * @param image2 the second image.
      * @return the calculated difference.
      */
-    public static int getImageDifference(@NonNull Bitmap image1, @NonNull Bitmap image2)  {
+    public static int getImageDifference(@NonNull Bitmap image1, @NonNull Bitmap image2) {
         int w1 = image1.getWidth();
         int h1 = image1.getHeight();
         int w2 = image2.getWidth();
@@ -137,16 +144,16 @@ public class ImageUtils {
         float scaleWidth = (float) w2 / w1;
         float scaleHeight = (float) h2 / h1;
 
-        int[] pixels1 = new int[w1*h1];
+        int[] pixels1 = new int[w1 * h1];
         image1.getPixels(pixels1, 0, w1, 0, 0, w1, h1);
-        int[] pixels2 = new int[w2*h2];
+        int[] pixels2 = new int[w2 * h2];
         image2.getPixels(pixels2, 0, w2, 0, 0, w2, h2);
 
         int sumDifference = 0;
 
-        int x1,y1,x2,y2, j;
+        int x1, y1, x2, y2, j;
 
-        for(int i = 0; i < pixels1.length; i++) {
+        for (int i = 0; i < pixels1.length; i++) {
             x1 = i % w1;
             y1 = i / w1;
 
@@ -159,5 +166,36 @@ public class ImageUtils {
         }
 
         return sumDifference;
+    }
+
+
+    private static final Paint textPaint;
+
+    static {
+        textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setAntiAlias(true);
+    }
+
+    private static final Rect textBounds = new Rect();
+
+    /**
+     * Creates a Bitmap for the given text with the given typeface.
+     *
+     * @param typeface the typeface.
+     * @param text     the text.
+     * @param textSize the text size.
+     * @return the bitmap.
+     */
+    public static Bitmap createBitmapForText(Typeface typeface, String text, int textSize) {
+        textPaint.setTypeface(typeface);
+        textPaint.setTextSize(textSize);
+        textPaint.getTextBounds(text, 0, text.length(), textBounds);
+
+        Bitmap textImage = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(textImage);
+        canvas.drawARGB(255, 255, 255, 255);
+        canvas.drawText(text, -textBounds.left, -textBounds.top, textPaint);
+        return textImage;
     }
 }

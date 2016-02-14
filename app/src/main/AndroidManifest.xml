@@ -35,6 +35,11 @@
 			android:label="ImageCleaning"
 			android:screenOrientation="portrait">
 		</activity>
+		<activity
+			android:name="hu.beesmarter.bsmart.fontrecognizer.ui.test.FontImageTestActivity"
+			android:label="ImageFromText"
+			android:screenOrientation="portrait">
+		</activity>
 	</application>
 
 </manifest>
