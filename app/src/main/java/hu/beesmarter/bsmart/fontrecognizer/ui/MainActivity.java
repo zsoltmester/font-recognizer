@@ -2,12 +2,12 @@ package hu.beesmarter.bsmart.fontrecognizer.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -18,12 +18,15 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import hu.beesmarter.bsmart.fontrecognizer.CameraUtils;
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.Font;
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.FontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
+import hu.beesmarter.bsmart.fontrecognizer.util.CameraUtils;
+import hu.beesmarter.bsmart.fontrecognizer.util.ImageUtils;
 
 public class MainActivity extends BaseActivity {
 
@@ -48,10 +51,14 @@ public class MainActivity extends BaseActivity {
 
 	private TextView realResultText;
 
+	private FontRecognizer fontRecognizer;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		fontRecognizer = new BasePointFontRecognizer();
 
 		coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 		modeSwitch = (Switch) findViewById(R.id.mode_switch);
@@ -105,7 +112,7 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void startCamera() {
-		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, CameraUtils.getTakenImageUri());
 		startActivityForResult(cameraIntent, REQUEST_CAMERA_RESULT_CODE);
 	}
@@ -115,7 +122,8 @@ public class MainActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
-			Bitmap capturedImage = CameraUtils.getSavedBitmapNormalized();
+			Bitmap capturedImage = CameraUtils.getSavedBitmapProcessed();
+			CameraUtils.saveCameraPicture(this, capturedImage, "captured_image");
 			processCapturedImage(capturedImage);
 		}
 	}
@@ -129,19 +137,40 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void startCommunication() {
-		String ipAddress = testInputIpAddrss.getText().toString();
+		final String ipAddress = testInputIpAddrss.getText().toString();
 		if (ipAddress.equals("")) {
 			showMessage("Please set an IP!");
 			return;
 		}
 		try {
-			ServerCommunicator serverCommunicator = new ServerCommunicator(ipAddress, AppConfig.COMM_PORT);
-			serverCommunicator.startCommunication();
-			serverCommunicator.helloServer();
-
-			serverCommunicator.endCommuncation();
-		} catch (IOException | ExecutionException | InterruptedException e) {
-			showMessage("Exception while communicating with server!");
+			if (!new AsyncTask<Void, Void, Boolean>() {
+				@Override
+				protected Boolean doInBackground(Void... params) {
+					try {
+						ServerCommunicator serverCommunicator =
+								new ServerCommunicator(ipAddress, AppConfig.COMM_PORT);
+						if (!serverCommunicator.startCommunication()) {
+							return false;
+						}
+						int remainingPictures = serverCommunicator.helloServer();
+						while (remainingPictures > 0) {
+							Font font = fontRecognizer.recognizeFontFromImage(
+									ImageUtils.processImage(serverCommunicator.getNextPicture()));
+							serverCommunicator.sendFont(font);
+							--remainingPictures;
+						}
+						serverCommunicator.endCommunication();
+					} catch (IOException e) {
+						return false;
+					}
+					return true;
+				}
+			}.execute().get()) {
+				throw new IllegalStateException();
+			}
+		} catch (InterruptedException | ExecutionException | IllegalStateException e) {
+			e.printStackTrace();
+			showMessage("Something went wrong. Please try again.");
 		}
 	}
 

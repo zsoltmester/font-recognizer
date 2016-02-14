@@ -14,14 +14,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
 
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.Font;
-import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.config.CommunicationConfig;
 
 
 public class ServerCommunicator {
+
+	public static final String TAG = ServerCommunicator.class.getSimpleName();
 
 	private static final String ENCODING = "ISO-8859-1";
 
@@ -30,18 +30,14 @@ public class ServerCommunicator {
 	private BufferedReader br;
 	private int port;
 	private String address;
-	private boolean socketEnabled;
 
 	/**
 	 * Constructor of the class.
 	 *
 	 * @param address the ip address.
 	 * @param port    the port number.
-	 * @throws IOException          please handle.
-	 * @throws ExecutionException   please handle.
-	 * @throws InterruptedException please handle.
 	 */
-	public ServerCommunicator(@NonNull final String address, final int port) throws IOException, ExecutionException, InterruptedException {
+	public ServerCommunicator(@NonNull final String address, final int port) {
 		this.address = address;
 		this.port = port;
 	}
@@ -50,127 +46,62 @@ public class ServerCommunicator {
 	 * Starts the communication (enable socket).
 	 *
 	 * @return {@code true} if success, {@code false} otherwise.
-	 * @throws ExecutionException   please handle.
-	 * @throws InterruptedException please handle.
 	 */
-	public boolean startCommunication() throws ExecutionException, InterruptedException {
-		boolean result = new AsyncTask<Void, Void, Boolean>() {
-			@Override
-			protected Boolean doInBackground(Void... params) {
-				try {
-					socket = new Socket(address, port);
-					InputStream inputStream = socket.getInputStream();
-					OutputStream outputStream = socket.getOutputStream();
-					br = new BufferedReader(new InputStreamReader(inputStream, ENCODING));
-					outputStream = new BufferedOutputStream(outputStream);
-					pw = new PrintWriter(new OutputStreamWriter(outputStream, ENCODING));
-					socketEnabled = true;
-					return socketEnabled;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return socketEnabled;
-			}
-		}.execute().get();
-		Log.d(AppConfig.LOG, "Connection succeed: " + String.valueOf(result));
-		return result;
+	public boolean startCommunication() throws IOException {
+		socket = new Socket(address, port);
+		InputStream inputStream = socket.getInputStream();
+		OutputStream outputStream = socket.getOutputStream();
+		br = new BufferedReader(new InputStreamReader(inputStream, ENCODING));
+		outputStream = new BufferedOutputStream(outputStream);
+		pw = new PrintWriter(new OutputStreamWriter(outputStream, ENCODING));
+		Log.d(TAG, "Connection succeeded!");
+		return true;
 	}
 
 	/**
 	 * Ends the communication (close the socket).
-	 *
-	 * @return {@code true} if success, {@code false} otherwise.
-	 * @throws IOException          please handle.
-	 * @throws ExecutionException   please handle.
-	 * @throws InterruptedException please handle.
 	 */
-	public boolean endCommuncation() throws IOException, ExecutionException, InterruptedException {
-		return new AsyncTask<Void, Void, Boolean>() {
-			@Override
-			protected Boolean doInBackground(Void... params) {
-				try {
-					socket.close();
-					socketEnabled = false;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return true;
-			}
-		}.execute().get();
-
+	public void endCommunication() throws IOException {
+		socket.close();
 	}
 
 	/**
 	 * Gets back how money picture will be sent by the server.
 	 *
 	 * @return how money pictures will be sent by the server.
-	 * @throws ExecutionException   please catch it.
-	 * @throws InterruptedException please catch it.
 	 */
-	public int helloServer() throws ExecutionException, InterruptedException {
-		return new AsyncTask<String, Void, Integer>() {
-			@Override
-			protected Integer doInBackground(String... params) {
-				String message = getMessage();
-				if (message.equals(CommunicationConfig.COMM_MSG_HELLO_SERVER)) {
-					sendMessage(CommunicationConfig.COMM_MSG_HELLO_CLIENT);
-				}
-				message = getMessage(); //SEND YOUR ID
-				if (message.equals(CommunicationConfig.COMM_MSG_REQUEST_ASK_ID)) {
-					sendMessage(CommunicationConfig.COMM_MSG_REPLY_ASK_ID);
-				}
-				message = getMessage();
-				return getRemainingPictures(message);
-			}
-		}.execute().get();
-
+	public int helloServer() throws IOException {
+		String message = getMessage();
+		if (message.equals(CommunicationConfig.COMM_MSG_HELLO_SERVER)) {
+			sendMessage(CommunicationConfig.COMM_MSG_HELLO_CLIENT);
+		}
+		message = getMessage();
+		if (message.equals(CommunicationConfig.COMM_MSG_REQUEST_ASK_ID)) {
+			sendMessage(CommunicationConfig.COMM_MSG_REPLY_ASK_ID);
+		}
+		message = getMessage();
+		return getRemainingPictures(message);
 	}
 
 	/**
 	 * Gets the next picture.
 	 *
 	 * @return the picutre in byte array.
-	 * @throws ExecutionException   please handle.
-	 * @throws InterruptedException please handle.
 	 */
-	public @NonNull byte[] getNextPicture() throws ExecutionException, InterruptedException {
-		return new AsyncTask<Void, Void, byte[]>() {
-			@Override
-			protected byte[] doInBackground(Void... params) {
-				sendMessage(CommunicationConfig.COMM_MSG_CLIENT_REQUEST_NEXT_PICTURE);
-				String response = getMessage();
-				return ImageEncoderUtils.convertToHex(formatResponseToPictureBytes(response));
-			}
-		}.execute().get();
+	public @NonNull byte[] getNextPicture() throws IOException {
+		sendMessage(CommunicationConfig.COMM_MSG_CLIENT_REQUEST_NEXT_PICTURE);
+		String response = getMessage();
+		return ImageEncoderUtils.convertToHex(formatResponseToPictureBytes(response));
 	}
 
 	/**
 	 * Sends the thought font to the server and gets back how money pictures remained.
 	 *
-	 * @param fontObject the fontObject
-	 * @return gets back the remaining pictures, or 0 if there is no more.
-	 * @throws ExecutionException   please handle.
-	 * @throws InterruptedException please handle.
+	 * @param font the fontObject
 	 */
-	public int sendThoughtFont(@NonNull final Font fontObject) throws ExecutionException, InterruptedException {
-		return new AsyncTask<String, Void, Integer>() {
-			@Override
-			protected Integer doInBackground(String... params) {
-				sendMessage(fontObject.getFontName());
-				String response = getMessage();
-				return getRemainingPictures(response);
-			}
-		}.execute().get();
-	}
-
-	/**
-	 * Check the server message that it is the last.
-	 *
-	 * @param message the server message.
-	 * @return {@code true} if it is the last message.
-	 */
-	public boolean checkEndMessage(@NonNull String message) {
-		return message.startsWith(CommunicationConfig.COMM_MSG_SERVER_FONT_ACK_END);
+	public void sendFont(@NonNull final Font font) throws IOException {
+		sendMessage("Akiza Sans"); // TODO
+		getMessage(); // clear buffer
 	}
 
 	private void sendMessage(@NonNull String message) {
@@ -178,15 +109,12 @@ public class ServerCommunicator {
 		pw.flush();
 	}
 
-	private @Nullable String getMessage() {
-		String message = null;
-		try {
-			message = br.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
+	private @NonNull String getMessage() throws IOException {
+		String message = br.readLine();
+		if (message == null) {
+			throw new IOException();
 		}
-		if (message != null)
-			Log.d(AppConfig.LOG, message);
+		Log.d(TAG, message);
 		return message;
 	}
 
@@ -201,7 +129,7 @@ public class ServerCommunicator {
 		if (indexBeforeNumber == -1) {
 			return 0;
 		}
-		String splittedString = communicationMessage.substring(indexBeforeNumber + 1);
+		String splittedString = communicationMessage.substring(indexBeforeNumber + 1).trim();
 		return Integer.valueOf(splittedString);
 	}
 
@@ -214,7 +142,7 @@ public class ServerCommunicator {
 	 */
 	private @NonNull String formatResponseToPictureBytes(@NonNull String imageResponse) {
 		String formattedString = imageResponse.substring(2, imageResponse.length() - 1 - 2);
-		Log.d(AppConfig.LOG, formattedString);
+		Log.d(TAG, formattedString);
 		return formattedString;
 	}
 }
