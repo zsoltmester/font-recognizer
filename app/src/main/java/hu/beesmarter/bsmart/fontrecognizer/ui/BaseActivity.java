@@ -17,7 +17,8 @@ public abstract class BaseActivity extends AppCompatActivity implements AlertDia
     protected static final String PERMISSION_ERROR_ALERT_DIALOG_TAG = "PERMISSION_ERROR_ALERT_DIALOG_TAG";
 
     protected static final String[] REQUIRED_PERMISSIONS = {
-            "android.permission.WRITE_EXTERNAL_STORAGE"
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.INTERNET"
     };
 
     @Override
