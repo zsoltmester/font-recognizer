@@ -68,6 +68,23 @@ public class TypeFaceManager {
         new LoadTypefacesTask(context, listener).execute();
     }
 
+    public static List<Pair<Typeface, Font>> loadTypeFacesSync(@NonNull Context context) {
+        try {
+            AssetManager assetManager = context.getAssets();
+            String[] files = assetManager.list("fonts");
+            List<Pair<Typeface, Font>> typefaces = new ArrayList<>();
+            for (String file : files) {
+                String fontName = file.split(FONT_NAME_TYPE_SEPARATOR)[0];
+                typefaces.add(new Pair<>(Typeface.createFromAsset(assetManager, FONTS_PATH + FILE_SEPARATOR + file), new Font(fontName)));
+            }
+            return typefaces;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     private static class LoadTypefacesTask extends AsyncTask<Void, Void, List<Pair<Typeface, Font>>> {
 
         private Context context;
@@ -80,19 +97,7 @@ public class TypeFaceManager {
 
         @Override
         protected List<Pair<Typeface, Font>> doInBackground(Void... params) {
-            try {
-                AssetManager assetManager = context.getAssets();
-                String[] files = assetManager.list("fonts");
-                List<Pair<Typeface, Font>> typefaces = new ArrayList<>();
-                for (String file : files) {
-                    String fontName = file.split(FONT_NAME_TYPE_SEPARATOR)[0];
-                    typefaces.add(new Pair<>(Typeface.createFromAsset(assetManager, FONTS_PATH + FILE_SEPARATOR + file), new Font(fontName)));
-                }
-                return typefaces;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+            return loadTypeFacesSync(context);
         }
 
         @Override
@@ -106,6 +111,7 @@ public class TypeFaceManager {
         }
 
     }
+
 
     /**
      * Listener for loading typefaces.

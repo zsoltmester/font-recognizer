@@ -2,13 +2,11 @@ package hu.beesmarter.bsmart.fontrecognizer.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -32,11 +30,8 @@ import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
 import hu.beesmarter.bsmart.fontrecognizer.typeface.TypeFaceManager;
 import hu.beesmarter.bsmart.fontrecognizer.util.CameraUtils;
-import hu.beesmarter.bsmart.fontrecognizer.util.ImageUtils;
 
-public class MainActivity extends BaseActivity implements TypeFaceManager.TypefaceLoadingListener{
-
-	private static final String STATE_FONT_RECOGNIZER = "STATE_FONT_RECOGNIZER";
+public class MainActivity extends BaseActivity {
 
 	private static final String STATE_MODE = "state_mode";
 	private static final int REQUEST_CAMERA_RESULT_CODE = 5;
@@ -82,7 +77,6 @@ public class MainActivity extends BaseActivity implements TypeFaceManager.Typefa
 
 		if (savedInstanceState != null) {
 			modeSwitch.setChecked(savedInstanceState.getBoolean(STATE_MODE));
-			fontRecognizer = (FontRecognizer) savedInstanceState.getSerializable(STATE_FONT_RECOGNIZER);
 		}
 
 		modeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -114,10 +108,7 @@ public class MainActivity extends BaseActivity implements TypeFaceManager.Typefa
 
 		initMode(modeSwitch.isChecked());
 
-		if (fontRecognizer == null) {
-			TypeFaceManager.loadTypeFaces(this, this);
-		}
-
+		fontRecognizer = new CompareFontRecognizer(TypeFaceManager.loadTypeFacesSync(this));
 	}
 
 	@Override
@@ -223,18 +214,6 @@ public class MainActivity extends BaseActivity implements TypeFaceManager.Typefa
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
 		savedInstanceState.putBoolean(STATE_MODE, modeSwitch.isChecked());
-		if (fontRecognizer != null) {
-			savedInstanceState.putSerializable(STATE_FONT_RECOGNIZER, fontRecognizer);
-		}
 	}
 
-	@Override
-	public void typefacesLoaded(List<Pair<Typeface, Font>> typefaces) {
-		fontRecognizer = new CompareFontRecognizer(typefaces);
-	}
-
-	@Override
-	public void typefacesFailedToLoad() {
-		fontRecognizer = new BasePointFontRecognizer();
-	}
 }

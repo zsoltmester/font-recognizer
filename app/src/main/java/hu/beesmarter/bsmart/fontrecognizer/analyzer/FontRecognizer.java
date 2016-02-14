@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * The main interface to communicate with a font recognizer algorithm.
  */
-public interface FontRecognizer extends Serializable {
+public interface FontRecognizer {
 
 	/**
 	 * It process the image and recognise the font.

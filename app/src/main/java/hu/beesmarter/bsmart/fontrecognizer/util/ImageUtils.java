@@ -198,6 +198,10 @@ public class ImageUtils {
      * @return the bitmap.
      */
     public static Bitmap createBitmapForText(Typeface typeface, String text, int textSize) {
+        if (textSize == 0) {
+            throw new IllegalArgumentException("Size is 0!");
+        }
+
         textPaint.setTypeface(typeface);
         textPaint.setTextSize(textSize);
         textPaint.getTextBounds(text, 0, text.length(), textBounds);
@@ -232,6 +236,10 @@ public class ImageUtils {
      * @return the bitmap.
      */
     public static Bitmap createBitmapForText(Typeface typeface, char[] characters, int textSize) {
+        if (textSize == 0) {
+            throw new IllegalArgumentException("Size is 0!");
+        }
+
         textPaint.setTypeface(typeface);
         textPaint.setTextSize(textSize);
         textPaint.getTextBounds(characters, 0, characters.length, textBounds);
