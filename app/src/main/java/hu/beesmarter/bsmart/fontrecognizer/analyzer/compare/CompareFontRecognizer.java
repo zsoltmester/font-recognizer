@@ -156,7 +156,7 @@ public class CompareFontRecognizer implements FontRecognizer {
             box.recycle();
         }
 
-        List<String> skippable = new ArrayList<>();
+        /*List<String> skippable = new ArrayList<>();
         ResultIterator resultIterator = tess.getResultIterator();
         while(resultIterator.next(TessBaseAPI.PageIteratorLevel.RIL_SYMBOL)) {
             List<android.util.Pair<String, Double>> choicesAndConfidence =
@@ -164,13 +164,13 @@ public class CompareFontRecognizer implements FontRecognizer {
             if (choicesAndConfidence.get(0).second < 70) {
                 skippable.add(choicesAndConfidence.get(0).first);
             }
-        }
+        }*/
 
         List<CharacterItem> characterList = new ArrayList<>();
         for (int i = 0; i < rectNumber; i++) {
-            if (skippable.contains(String.valueOf(text.charAt(i)))) {
+            /*if (skippable.contains(String.valueOf(text.charAt(i)))) {
                 continue;
-            }
+            }*/
             Rect rect = rectList.get(i);
             Bitmap croppedImage = Bitmap.createBitmap(image, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
             characterList.add(new CharacterItem(text.charAt(i), croppedImage, rect));
