@@ -59,9 +59,8 @@ public class ImageUtils {
         int height = bitmap.getHeight();
         int[] pixels = new int[width * height];
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-        int red, green, blue;
         int pixel;
-        int colorSum, finalColor;
+        int finalColor;
         for(int i = 0; i < pixels.length; i++) {
             pixel = pixels[i];
             finalColor = colorDecider.isDark(pixel, threshold) ? MIN_RGB : MAX_RGB;
@@ -120,5 +119,45 @@ public class ImageUtils {
             Log.e(TAG, "Unable to change the orientation.");
             return bitmap;
         }
+    }
+
+    /**
+     * Calculates the difference between two images. The difference should be 0 for identical images, and it should be bigger for more different images.
+     *
+     * @param image1 the first image.
+     * @param image2 the second image.
+     * @return the calculated difference.
+     */
+    public static int getImageDifference(@NonNull Bitmap image1, @NonNull Bitmap image2)  {
+        int w1 = image1.getWidth();
+        int h1 = image1.getHeight();
+        int w2 = image2.getWidth();
+        int h2 = image2.getHeight();
+
+        float scaleWidth = (float) w2 / w1;
+        float scaleHeight = (float) h2 / h1;
+
+        int[] pixels1 = new int[w1*h1];
+        image1.getPixels(pixels1, 0, w1, 0, 0, w1, h1);
+        int[] pixels2 = new int[w2*h2];
+        image2.getPixels(pixels2, 0, w2, 0, 0, w2, h2);
+
+        int sumDifference = 0;
+
+        int x1,y1,x2,y2, j;
+
+        for(int i = 0; i < pixels1.length; i++) {
+            x1 = i % w1;
+            y1 = i / w1;
+
+            x2 = (int) (x1 * scaleWidth + 0.5f);
+            y2 = (int) (y1 * scaleHeight + 0.5f);
+
+            j = y2 * w2 + x2;
+
+            sumDifference += Math.abs(pixels1[i] - pixels2[j]);
+        }
+
+        return sumDifference;
     }
 }
