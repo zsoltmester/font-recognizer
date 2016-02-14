@@ -77,6 +77,7 @@ public class TypeFaceManager {
                 String fontName = file.split(FONT_NAME_TYPE_SEPARATOR)[0];
                 typefaces.add(new Pair<>(Typeface.createFromAsset(assetManager, FONTS_PATH + FILE_SEPARATOR + file), new Font(fontName)));
             }
+            TypeFaceManager.typefaces = new WeakReference<>(typefaces);
             return typefaces;
         } catch (IOException e) {
             e.printStackTrace();
