@@ -103,6 +103,13 @@
                 android:gravity="center_horizontal"
                 android:textSize="50sp"
                 android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"/>
         </LinearLayout>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
