@@ -24,9 +24,8 @@ import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecog
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
-import hu.beesmarter.bsmart.fontrecognizer.util.AndroidUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
 	private static final String STATE_MODE = "state_mode";
 	private static final int REQUEST_CAMERA_RESULT_CODE = 5;
@@ -53,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		TessUtils.initTessdata(this);
 
 		coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 		modeSwitch = (Switch) findViewById(R.id.mode_switch);
@@ -92,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		initMode(modeSwitch.isChecked());
+	}
+
+	@Override
+	protected void onPermissionsGranted() {
+		TessUtils.initTessdata(this);
 	}
 
 	private void initMode(boolean isChecked) {

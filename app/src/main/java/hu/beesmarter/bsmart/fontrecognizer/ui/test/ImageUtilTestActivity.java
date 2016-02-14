@@ -7,12 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
+import hu.beesmarter.bsmart.fontrecognizer.ui.BaseActivity;
 import hu.beesmarter.bsmart.fontrecognizer.util.AndroidUtils;
 
 /**
  * Activity for testing image processing operations.
  */
-public class ImageUtilTestActivity extends AppCompatActivity {
+public class ImageUtilTestActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

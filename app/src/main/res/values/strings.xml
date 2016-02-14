@@ -5,4 +5,15 @@
 	<string name="start_camera">Start camera</string>
 	<string name="font_result_label">The font of the text:</string>
 	<string name="switch_label">Test mode</string>
+
+	<string name="alert_dialog_ok_button">OK</string>
+
+	<!-- Permission error dialog -->
+	<string name="permission_error_title">HIBA</string>
+    <string name="permission_error_message">
+        Az alkalmazásnak szüksége van minden engedélyre, amit elkért,
+        különben nem képes megfelelően működni! Kérlek, engedélyezz
+        mindent a beállításokban!
+    </string>
+
 </resources>

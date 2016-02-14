@@ -15,13 +15,14 @@ import android.widget.ImageView;
 import java.io.IOException;
 
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
+import hu.beesmarter.bsmart.fontrecognizer.ui.BaseActivity;
 import hu.beesmarter.bsmart.fontrecognizer.util.AndroidUtils;
 import hu.beesmarter.bsmart.fontrecognizer.util.ImageUtils;
 
 /**
  * Test screen for the image cleaning function.
  */
-public class ImageCleaningTestActivity extends AppCompatActivity {
+public class ImageCleaningTestActivity extends BaseActivity {
 
     private static final String STATE_THRESHOLD = "STATE_THRESHOLD";
 
