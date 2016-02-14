@@ -135,7 +135,17 @@ public class ImageUtils {
      * @param image2 the second image.
      * @return the calculated difference.
      */
-    public static int getImageDifference(@NonNull Bitmap image1, @NonNull Bitmap image2) {
+    public static long getImageDifference(@NonNull Bitmap image1, @NonNull Bitmap image2) {
+        int numOfPixels1 = image1.getWidth() * image1.getHeight();
+        int numOfPixels2 = image1.getWidth() * image1.getHeight();
+
+        if (numOfPixels2 < numOfPixels1) {
+            // Image1 should be the picture with lower resolution
+            Bitmap temp = image1;
+            image1 = image2;
+            image2 = temp;
+        }
+
         int w1 = image1.getWidth();
         int h1 = image1.getHeight();
         int w2 = image2.getWidth();
@@ -149,7 +159,7 @@ public class ImageUtils {
         int[] pixels2 = new int[w2 * h2];
         image2.getPixels(pixels2, 0, w2, 0, 0, w2, h2);
 
-        int sumDifference = 0;
+        long sumDifference = 0L;
 
         int x1, y1, x2, y2, j;
 
@@ -162,7 +172,7 @@ public class ImageUtils {
 
             j = y2 * w2 + x2;
 
-            sumDifference += Math.abs(pixels1[i] - pixels2[j]);
+            sumDifference += (long) (Math.abs(pixels1[i] - pixels2[j]));
         }
 
         return sumDifference;
@@ -195,7 +205,7 @@ public class ImageUtils {
         Bitmap textImage = null;
         try {
             textImage = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
-        } catch (Exception|OutOfMemoryError e) {
+        } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
             if (textImage != null) {
                 textImage.recycle();
@@ -212,4 +222,39 @@ public class ImageUtils {
         canvas.drawText(text, -textBounds.left, -textBounds.top, textPaint);
         return textImage;
     }
+
+    /**
+     * Creates a Bitmap for the given text with the given typeface.
+     *
+     * @param typeface   the typeface.
+     * @param characters the text.
+     * @param textSize   the text size.
+     * @return the bitmap.
+     */
+    public static Bitmap createBitmapForText(Typeface typeface, char[] characters, int textSize) {
+        textPaint.setTypeface(typeface);
+        textPaint.setTextSize(textSize);
+        textPaint.getTextBounds(characters, 0, characters.length, textBounds);
+
+        Bitmap textImage = null;
+        try {
+            textImage = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
+        } catch (Exception | OutOfMemoryError e) {
+            e.printStackTrace();
+            if (textImage != null) {
+                textImage.recycle();
+                textImage = null;
+            }
+        }
+
+        if (textImage == null) {
+            return createBitmapForText(typeface, characters, textSize / 2);
+        }
+
+        Canvas canvas = new Canvas(textImage);
+        canvas.drawARGB(255, 255, 255, 255);
+        canvas.drawText(characters, 0, characters.length, -textBounds.left, -textBounds.top, textPaint);
+        return textImage;
+    }
+
 }

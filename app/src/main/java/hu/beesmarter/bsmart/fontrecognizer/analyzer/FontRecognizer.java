@@ -3,12 +3,13 @@ package hu.beesmarter.bsmart.fontrecognizer.analyzer;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * The main interface to communicate with a font recognizer algorithm.
  */
-public interface FontRecognizer {
+public interface FontRecognizer extends Serializable {
 
 	/**
 	 * It process the image and recognise the font.
