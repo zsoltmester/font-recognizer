@@ -78,6 +78,9 @@ public class CompareFontRecognizer implements FontRecognizer {
                 case EVERY_CHAR: {
                     for(CharacterItem character: chars) {
                         Bitmap generated = getBitmapForCharacter(actualTypeface, character.getCharacter());
+                        if (generated == null) {
+                            continue;
+                        }
                         actualDiff += ImageUtils.getImageDifference(character.getBitmap(), generated);
                         generated.recycle();
                     }
@@ -85,12 +88,18 @@ public class CompareFontRecognizer implements FontRecognizer {
                 }
                 case FIRST_CHAR: {
                     Bitmap generated = getBitmapForCharacter(actualTypeface, chars.get(0).getCharacter());
+                    if (generated == null) {
+                        continue;
+                    }
                     actualDiff += ImageUtils.getImageDifference(chars.get(0).getBitmap(), generated);
                     generated.recycle();
                     break;
                 }
                 case LAST_CHAR: {
                     Bitmap generated = getBitmapForCharacter(actualTypeface, chars.get(chars.size() - 1).getCharacter());
+                    if (generated == null) {
+                        continue;
+                    }
                     actualDiff += ImageUtils.getImageDifference(chars.get(chars.size() - 1).getBitmap(), generated);
                     generated.recycle();
                     break;

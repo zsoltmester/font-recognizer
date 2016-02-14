@@ -167,8 +167,8 @@ public class ImageUtils {
             x1 = i % w1;
             y1 = i / w1;
 
-            x2 = (int) (x1 * scaleWidth + 0.5f);
-            y2 = (int) (y1 * scaleHeight + 0.5f);
+            x2 = (int) (x1 * scaleWidth);
+            y2 = (int) (y1 * scaleHeight);
 
             j = y2 * w2 + x2;
 
@@ -208,6 +208,9 @@ public class ImageUtils {
 
         Bitmap textImage = null;
         try {
+            if (textBounds.width() <= 0 || textBounds.height() <= 0) {
+                return null;
+            }
             textImage = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
         } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
@@ -246,6 +249,9 @@ public class ImageUtils {
 
         Bitmap textImage = null;
         try {
+            if (textBounds.width() <= 0 || textBounds.height() <= 0) {
+                return null;
+            }
             textImage = Bitmap.createBitmap(textBounds.width(), textBounds.height(), Bitmap.Config.ARGB_8888);
         } catch (Exception | OutOfMemoryError e) {
             e.printStackTrace();
