@@ -61,7 +61,7 @@ public class CompareFontRecognizer implements FontRecognizer {
         log("Recognition started at: " + startTime);
         Bitmap cleaned = cleanTheImage(image);
         image.recycle();
-        List<CharacterItem> chars = getCharactersBitmap(image);
+        List<CharacterItem> chars = getCharactersBitmap(cleaned);
 
         long leastDiff = Long.MAX_VALUE;
         long actualDiff;
@@ -111,6 +111,7 @@ public class CompareFontRecognizer implements FontRecognizer {
         long endTime = System.currentTimeMillis();
         log("Recognition ended at: " + endTime);
         log("Total duration: " + (endTime - startTime) / 1000L);
+        cleaned.recycle();
         return typefaces.get(bestIndex).second;
     }
 

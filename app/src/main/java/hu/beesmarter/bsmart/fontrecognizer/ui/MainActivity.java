@@ -180,8 +180,10 @@ public class MainActivity extends BaseActivity implements TypeFaceManager.Typefa
 						}
 						int remainingPictures = serverCommunicator.helloServer();
 						while (remainingPictures > 0) {
-							Font font = fontRecognizer.recognizeFontFromImage(
-									ImageUtils.processImage(serverCommunicator.getNextPicture()));
+							//Font font = fontRecognizer.recognizeFontFromImage(
+							//		ImageUtils.processImage(serverCommunicator.getNextPicture()));
+							Font font = fontRecognizer.recognizeFontFromImage(serverCommunicator.getNextPicture());
+
 							serverCommunicator.sendFont(font);
 							--remainingPictures;
 						}
