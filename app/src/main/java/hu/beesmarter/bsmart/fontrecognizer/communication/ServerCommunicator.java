@@ -146,7 +146,7 @@ public class ServerCommunicator {
 	 * @return the formatted string.
 	 */
 	private @NonNull String formatResponseToPictureBytes(@NonNull String imageResponse) {
-		String formattedString = imageResponse.substring(2, imageResponse.length() - 1 - 2);
+		String formattedString = imageResponse.substring(2, imageResponse.length() - 2);
 		Log.d(TAG, formattedString);
 		return formattedString;
 	}
