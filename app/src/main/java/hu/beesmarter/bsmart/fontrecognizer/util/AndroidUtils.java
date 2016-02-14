@@ -45,6 +45,18 @@ public class AndroidUtils {
     }
 
     /**
+     * Starts a file chooser.
+     *
+     * @param activity    the Activity that requests the file choose.
+     * @param requestCode request code for getting file.
+     */
+    public static void startFileChoosed(@NonNull Activity activity, int requestCode) {
+        Intent fileChooserIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        fileChooserIntent.setType("file/*");
+        activity.startActivityForResult(fileChooserIntent, requestCode);
+    }
+
+    /**
      * Creates a temp file for the images captured with camera.
      *
      * @param context context.

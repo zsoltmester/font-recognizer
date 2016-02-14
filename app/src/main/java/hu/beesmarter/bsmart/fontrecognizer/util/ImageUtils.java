@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -15,6 +16,27 @@ import java.io.IOException;
  */
 public class ImageUtils {
 
+    public interface ColorDecider {
+        boolean isDark(@ColorInt int color, int threshold);
+    }
+
+    public static final ColorDecider CLEAN_METHOD_1 = new ColorDecider() {
+        @Override
+        public boolean isDark(@ColorInt int color, int threshold) {
+            int colorSum = Color.red(color) + Color.green(color) + Color.blue(color);
+            return colorSum <= 3 * threshold;
+        }
+
+    };
+
+    public static final ColorDecider CLEAN_METHOD_2 = new ColorDecider() {
+        @Override
+        public boolean isDark(@ColorInt int color, int threshold) {
+            float luminance = 0.2126f * Color.red(color) + 0.7152f * Color.green(color) + 0.0722f * Color.blue(color);
+            return luminance <= 3 * threshold;
+        }
+    };
+
     private static final String TAG = ImageUtils.class.getName();
 
     public static final int MIN_RGB = 0;
@@ -23,6 +45,8 @@ public class ImageUtils {
     public static final int THRESHOLD = 90;
     public static final int BITMAP_SAMPLE_SIZE = 8; // TODO ezt egy jó értékre állítani felbontástól függően
 
+    public static final ColorDecider DEFAULT_METHOD = CLEAN_METHOD_1;
+
     /**
      * Cleans the image.
      *
@@ -30,7 +54,7 @@ public class ImageUtils {
      * @param threshold threshold for choosing final color of pixel, should be between 0-255
      * @return the cleaned image.
      */
-    public static Bitmap cleanImage(Bitmap bitmap, int threshold) {
+    public static Bitmap cleanImage(Bitmap bitmap, int threshold, @NonNull ColorDecider colorDecider) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] pixels = new int[width * height];
@@ -40,8 +64,7 @@ public class ImageUtils {
         int colorSum, finalColor;
         for(int i = 0; i < pixels.length; i++) {
             pixel = pixels[i];
-            colorSum = Color.red(pixel) + Color.green(pixel) + Color.blue(pixel);
-            finalColor = colorSum <= 3 * threshold ? MIN_RGB : MAX_RGB;
+            finalColor = colorDecider.isDark(pixel, threshold) ? MIN_RGB : MAX_RGB;
             pixels[i] = Color.argb(255, finalColor, finalColor, finalColor);
         }
         return Bitmap.createBitmap(pixels, width, height, bitmap.getConfig());
@@ -55,7 +78,7 @@ public class ImageUtils {
         options.inSampleSize = BITMAP_SAMPLE_SIZE;
         Bitmap image = ImageUtils.normalizeBitmapOrientation(
                 BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options));
-        return ImageUtils.cleanImage(image, ImageUtils.THRESHOLD);
+        return ImageUtils.cleanImage(image, ImageUtils.THRESHOLD, ImageUtils.DEFAULT_METHOD);
     }
 
     /**

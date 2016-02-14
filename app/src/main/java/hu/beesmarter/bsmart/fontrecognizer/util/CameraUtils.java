@@ -36,7 +36,7 @@ public class CameraUtils {
 		options.inSampleSize = ImageUtils.BITMAP_SAMPLE_SIZE;
 		Bitmap image = ImageUtils.normalizeBitmapOrientation(
 				BitmapFactory.decodeFile(TAKEN_IMAGE_PATH, options));
-		return ImageUtils.cleanImage(image, ImageUtils.THRESHOLD);
+		return ImageUtils.cleanImage(image, ImageUtils.THRESHOLD, ImageUtils.DEFAULT_METHOD);
 	}
 
 	/**
