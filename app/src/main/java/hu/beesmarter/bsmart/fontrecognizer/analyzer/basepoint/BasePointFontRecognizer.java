@@ -59,7 +59,9 @@ public class BasePointFontRecognizer implements FontRecognizer {
 				rectList.add(rect);
 				rectNumber++;
 			}
+			box.recycle();
 		}
+		pixa.recycle();
 
 		List<CharacterItem> characterList = new ArrayList<>();
 		for (int i = 0; i < rectNumber; i++) {

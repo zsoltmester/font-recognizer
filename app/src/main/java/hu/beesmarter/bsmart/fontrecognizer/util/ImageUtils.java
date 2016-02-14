@@ -80,9 +80,8 @@ public class ImageUtils {
     public static Bitmap processImage(byte[] rawImage) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = BITMAP_SAMPLE_SIZE;
-        Bitmap image = ImageUtils.normalizeBitmapOrientation(
+        return ImageUtils.normalizeBitmapOrientation(
                 BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options));
-        return ImageUtils.cleanImage(image, ImageUtils.THRESHOLD, ImageUtils.DEFAULT_METHOD);
     }
 
     /**

@@ -77,6 +77,9 @@ public class CompareFontRecognizer implements FontRecognizer {
             switch (STRATEGY) {
                 case EVERY_CHAR: {
                     for(CharacterItem character: chars) {
+                        if (character.getCharacter() < 0x21 || character.getCharacter() > 0x7e) {
+                            continue;
+                        }
                         Bitmap generated = getBitmapForCharacter(actualTypeface, character.getCharacter());
                         if (generated == null) {
                             continue;
@@ -149,6 +152,7 @@ public class CompareFontRecognizer implements FontRecognizer {
                 rectList.add(rect);
                 rectNumber++;
             }
+            box.recycle();
         }
 
         List<CharacterItem> characterList = new ArrayList<>();
@@ -157,6 +161,9 @@ public class CompareFontRecognizer implements FontRecognizer {
             Bitmap croppedImage = Bitmap.createBitmap(image, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
             characterList.add(new CharacterItem(text.charAt(i), croppedImage, rect));
         }
+
+        pixa.recycle();
+
         return characterList;
     }
 

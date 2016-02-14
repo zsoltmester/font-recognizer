@@ -11,25 +11,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import hu.beesmarter.bsmart.fontrecognizer.analyzer.CharacterItem;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.Font;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.FontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
-import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.compare.CompareFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
 import hu.beesmarter.bsmart.fontrecognizer.typeface.TypeFaceManager;
 import hu.beesmarter.bsmart.fontrecognizer.util.CameraUtils;
+import hu.beesmarter.bsmart.fontrecognizer.util.ImageUtils;
 
 public class MainActivity extends BaseActivity {
 
@@ -54,9 +51,6 @@ public class MainActivity extends BaseActivity {
 
 	private TextView realResultText;
 
-	//TODO for test, please remove it before the release
-	private ImageView imageView;
-
 	private FontRecognizer fontRecognizer = null;
 
 	@Override
@@ -73,7 +67,6 @@ public class MainActivity extends BaseActivity {
 		realStartCameraButton = (Button) findViewById(R.id.start_camera_button);
 		realResultText = (TextView) findViewById(R.id.font_result_text);
 		realStatusMessage = (TextView) findViewById(R.id.status_message);
-		imageView = (ImageView)findViewById(R.id.image);
 
 		if (savedInstanceState != null) {
 			modeSwitch.setChecked(savedInstanceState.getBoolean(STATE_MODE));
@@ -136,21 +129,14 @@ public class MainActivity extends BaseActivity {
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
 			Bitmap capturedImage = CameraUtils.getSavedBitmapProcessed();
-			CameraUtils.saveCameraPicture(this, capturedImage, "captured_image");
 			processCapturedImage(capturedImage);
 		}
 	}
 
 	private void processCapturedImage(Bitmap capturedImage) {
-		BasePointFontRecognizer basePointFontRecognizer = new BasePointFontRecognizer();
-//		String fontName =
-//				basePointFontRecognizer.recognizeFontFromImage(capturedImage).getFontName();
-		List<CharacterItem> characters = basePointFontRecognizer.getCharactersBitmap(capturedImage);
-
-		//TODO for test, please remove
-		imageView.setImageBitmap(characters.get(2).getBitmap());
-		realResultText.setText(String.valueOf(characters.get(2).getCharacter()));
-
+		String fontName = fontRecognizer.recognizeFontFromImage(capturedImage).getFontName();
+		realStatusMessage.setVisibility(View.VISIBLE);
+		realResultText.setText(fontName);
 	}
 
 	private void startCommunication() {
@@ -171,9 +157,8 @@ public class MainActivity extends BaseActivity {
 						}
 						int remainingPictures = serverCommunicator.helloServer();
 						while (remainingPictures > 0) {
-							//Font font = fontRecognizer.recognizeFontFromImage(
-							//		ImageUtils.processImage(serverCommunicator.getNextPicture()));
-							Font font = fontRecognizer.recognizeFontFromImage(serverCommunicator.getNextPicture());
+							Font font = fontRecognizer.recognizeFontFromImage(
+									ImageUtils.processImage(serverCommunicator.getNextPicture()));
 
 							serverCommunicator.sendFont(font);
 							--remainingPictures;

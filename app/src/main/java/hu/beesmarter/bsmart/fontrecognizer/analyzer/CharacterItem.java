@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 
 /**
- * Created by alit on 14/02/2016.
+ * Recognized characters with the char name, its bitmap and the parameters.
  */
 public class CharacterItem {
 

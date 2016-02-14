@@ -100,7 +100,7 @@ public class ServerCommunicator {
 	 * @param font the fontObject
 	 */
 	public void sendFont(@NonNull final Font font) throws IOException {
-		sendMessage("Akiza Sans"); // TODO
+		sendMessage(font.getFontName()); // TODO
 		getMessage(); // clear buffer
 	}
 
