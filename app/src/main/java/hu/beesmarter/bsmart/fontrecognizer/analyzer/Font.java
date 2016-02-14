@@ -21,4 +21,28 @@ public class Font {
 	public @NonNull String getFontName() {
 		return fontName;
 	}
+
+	@Override
+	public int hashCode() {
+		return fontName.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
+
+		if (o == this) {
+			return true;
+		}
+
+		if (!(o instanceof Font)) {
+			return false;
+		}
+
+		Font rhs = (Font) o;
+
+		return rhs.fontName.equals(fontName);
+	}
 }

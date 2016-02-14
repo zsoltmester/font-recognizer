@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.Font;
+import hu.beesmarter.bsmart.fontrecognizer.analyzer.FontUtils;
 import hu.beesmarter.bsmart.fontrecognizer.config.CommunicationConfig;
 
 
@@ -100,9 +101,11 @@ public class ServerCommunicator {
 	 * @param font the fontObject
 	 */
 	public void sendFont(@NonNull final Font font) throws IOException {
-		sendMessage(font != null && !font.getFontName().isEmpty()
-				&& !font.getFontName().equals("null") ?
-				font.getFontName() : "Segoe UI Symbol");
+		String fontName = font.getFontName();
+		if (!FontUtils.fonts.contains(fontName)) {
+			fontName = "Segoe UI Symbol";
+		}
+		sendMessage(fontName);
 		getMessage(); // clear buffer
 	}
 

@@ -1,5 +1,6 @@
 package hu.beesmarter.bsmart.fontrecognizer.analyzer;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -10,7 +11,7 @@ public class FontUtils {
 	/**
 	 * The collection if the available fonts.
 	 */
-	public static Set<Font> fonts;
+	public static Set<Font> fonts = new HashSet<>();
 
 	static {
 		fonts.add(new Font("Akiza Sans"));
