@@ -30,6 +30,7 @@ import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
 import hu.beesmarter.bsmart.fontrecognizer.fontrecognizer.R;
 import hu.beesmarter.bsmart.fontrecognizer.typeface.TypeFaceManager;
 import hu.beesmarter.bsmart.fontrecognizer.util.CameraUtils;
+import hu.beesmarter.bsmart.fontrecognizer.util.ImageUtils;
 
 public class MainActivity extends BaseActivity {
 
@@ -164,9 +165,8 @@ public class MainActivity extends BaseActivity {
 						}
 						int remainingPictures = serverCommunicator.helloServer();
 						while (remainingPictures > 0) {
-							//Font font = fontRecognizer.recognizeFontFromImage(
-							//		ImageUtils.processImage(serverCommunicator.getNextPicture()));
-							Font font = fontRecognizer.recognizeFontFromImage(serverCommunicator.getNextPicture());
+							Font font = fontRecognizer.recognizeFontFromImage(
+									ImageUtils.processImage(serverCommunicator.getNextPicture()));
 
 							serverCommunicator.sendFont(font);
 							--remainingPictures;
