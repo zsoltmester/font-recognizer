@@ -136,7 +136,6 @@ public class MainActivity extends BaseActivity {
 
 		if (requestCode == REQUEST_CAMERA_RESULT_CODE) {
 			Bitmap capturedImage = CameraUtils.getSavedBitmapProcessed();
-			CameraUtils.saveCameraPicture(this, capturedImage, "captured_image");
 			processCapturedImage(capturedImage);
 		}
 	}
@@ -145,7 +144,6 @@ public class MainActivity extends BaseActivity {
 		String fontName = fontRecognizer.recognizeFontFromImage(capturedImage).getFontName();
 		realStatusMessage.setVisibility(View.VISIBLE);
 		realResultText.setText(fontName);
-
 	}
 
 	private void startCommunication() {
