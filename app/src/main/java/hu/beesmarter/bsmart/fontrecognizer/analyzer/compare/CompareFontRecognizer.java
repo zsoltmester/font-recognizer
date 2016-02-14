@@ -169,7 +169,7 @@ public class CompareFontRecognizer implements FontRecognizer {
         List<CharacterItem> characterList = new ArrayList<>();
         for (int i = 0; i < rectNumber; i++) {
             if (skippable.contains(String.valueOf(text.charAt(i)))) {
-                //continue;
+                continue;
             }
             Rect rect = rectList.get(i);
             Bitmap croppedImage = Bitmap.createBitmap(image, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
