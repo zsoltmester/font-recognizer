@@ -100,7 +100,9 @@ public class ServerCommunicator {
 	 * @param font the fontObject
 	 */
 	public void sendFont(@NonNull final Font font) throws IOException {
-		sendMessage(font.getFontName()); // TODO
+		sendMessage(font != null && !font.getFontName().isEmpty()
+				&& !font.getFontName().equals("null") ?
+				font.getFontName() : "Segoe UI Symbol");
 		getMessage(); // clear buffer
 	}
 

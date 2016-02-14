@@ -34,9 +34,8 @@ public class CameraUtils {
 	public static @Nullable Bitmap getSavedBitmapProcessed() {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = ImageUtils.BITMAP_SAMPLE_SIZE;
-		Bitmap image = ImageUtils.normalizeBitmapOrientation(
+		return ImageUtils.normalizeBitmapOrientation(
 				BitmapFactory.decodeFile(TAKEN_IMAGE_PATH, options));
-		return ImageUtils.cleanImage(image, ImageUtils.THRESHOLD, ImageUtils.DEFAULT_METHOD);
 	}
 
 	/**
