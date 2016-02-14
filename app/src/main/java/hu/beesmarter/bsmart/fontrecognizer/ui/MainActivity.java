@@ -142,14 +142,9 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void processCapturedImage(Bitmap capturedImage) {
-		BasePointFontRecognizer basePointFontRecognizer = new BasePointFontRecognizer();
-//		String fontName =
-//				basePointFontRecognizer.recognizeFontFromImage(capturedImage).getFontName();
-		List<CharacterItem> characters = basePointFontRecognizer.getCharactersBitmap(capturedImage);
-
-		//TODO for test, please remove
-		imageView.setImageBitmap(characters.get(2).getBitmap());
-		realResultText.setText(String.valueOf(characters.get(2).getCharacter()));
+		String fontName = fontRecognizer.recognizeFontFromImage(capturedImage).getFontName();
+		realStatusMessage.setVisibility(View.VISIBLE);
+		realResultText.setText(fontName);
 
 	}
 
