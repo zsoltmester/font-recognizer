@@ -11,19 +11,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import hu.beesmarter.bsmart.fontrecognizer.analyzer.CharacterItem;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.Font;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.FontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.TessUtils;
-import hu.beesmarter.bsmart.fontrecognizer.analyzer.basepoint.BasePointFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.analyzer.compare.CompareFontRecognizer;
 import hu.beesmarter.bsmart.fontrecognizer.communication.ServerCommunicator;
 import hu.beesmarter.bsmart.fontrecognizer.config.AppConfig;
@@ -55,9 +51,6 @@ public class MainActivity extends BaseActivity {
 
 	private TextView realResultText;
 
-	//TODO for test, please remove it before the release
-	private ImageView imageView;
-
 	private FontRecognizer fontRecognizer = null;
 
 	@Override
@@ -74,7 +67,6 @@ public class MainActivity extends BaseActivity {
 		realStartCameraButton = (Button) findViewById(R.id.start_camera_button);
 		realResultText = (TextView) findViewById(R.id.font_result_text);
 		realStatusMessage = (TextView) findViewById(R.id.status_message);
-		imageView = (ImageView)findViewById(R.id.image);
 
 		if (savedInstanceState != null) {
 			modeSwitch.setChecked(savedInstanceState.getBoolean(STATE_MODE));
