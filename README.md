@@ -1,1 +1,1 @@
-An Android application to recognize fonts in images.
+Android application to recognize fonts in images.
